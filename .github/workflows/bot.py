@@ -173,6 +173,7 @@ def get_keyboard3():
 def keyboard_callback_handler(update: Update, context: CallbackContext):
     """ Обработчик ВСЕХ кнопок со ВСЕХ клавиатур
     """
+    global rl, room, lprice, gprice
     query = update.callback_query
     data = query.data
 
@@ -241,32 +242,33 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
             CALLBACK_BUTTON13_PRICE: 15000000,
             CALLBACK_BUTTON14_PRICE: 20000000,
         }[data]
+
         query.edit_message_text(
             text="Выберите кол-во комнат",
             reply_markup=get_keyboard3(),
         )
-        if data in (CALLBACK_BUTTON1_ROOM, CALLBACK_BUTTON2_ROOM, CALLBACK_BUTTON3_ROOM,
-                    CALLBACK_BUTTON4_ROOM, CALLBACK_BUTTON5_ROOM, CALLBACK_BUTTON6_ROOM):
-            text = 'Предложения на рынке:\n'
-            room = {
-                CALLBACK_BUTTON1_ROOM: 'Студия',
-                CALLBACK_BUTTON2_ROOM: '1-к квартира',
-                CALLBACK_BUTTON3_ROOM: '2-к квартира',
-                CALLBACK_BUTTON4_ROOM: '3-к квартира',
-                CALLBACK_BUTTON5_ROOM: '4-к квартира',
-                CALLBACK_BUTTON6_ROOM: '5-к квартира',
-            }[data]
 
-            rl = Product.objects.filter(
-                price__gte=lprice,
-                price__lt=gprice,
-                title__contains=f'{room}',,
-            )
-            for e in rl1[0:5]:
-                text = text + '\n'.join([f'{e.title}:\n{e.url}\n'])
-            query.edit_message_text(
-                text=f'\n{text}',
-            )
+    elif data in (CALLBACK_BUTTON1_ROOM, CALLBACK_BUTTON2_ROOM, CALLBACK_BUTTON3_ROOM,
+                  CALLBACK_BUTTON4_ROOM, CALLBACK_BUTTON5_ROOM, CALLBACK_BUTTON6_ROOM):
+        text = 'Предложения на рынке:\n'
+        room = {
+            CALLBACK_BUTTON1_ROOM: 'Студия',
+            CALLBACK_BUTTON2_ROOM: '1-к',
+            CALLBACK_BUTTON3_ROOM: '2-к',
+            CALLBACK_BUTTON4_ROOM: '3-к',
+            CALLBACK_BUTTON5_ROOM: '4-к',
+            CALLBACK_BUTTON6_ROOM: '5-к',
+        }[data]
+    rl = Product.objects.filter(
+        price__gte=lprice,
+        price__lt=gprice,
+        title__contains=f'{room}',
+    )
+    for e in rl[0:5]:
+        text = text + '\n'.join([f'{e.title}:\n{e.url}\n'])
+    query.edit_message_text(
+        text=f'\n{text}',
+    )
 
 
 def log_errors(f):
