@@ -260,7 +260,7 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
             rl = Product.objects.filter(
                 price__gte=lprice,
                 price__lt=gprice,
-                title__gte=f'{room}',
+                title__contains=f'{room}',,
             )
             for e in rl1[0:5]:
                 text = text + '\n'.join([f'{e.title}:\n{e.url}\n'])
