@@ -21,7 +21,7 @@ from aparser.models import Product
 # Поэтому каждый идентификатор должен быть уникальным
 CALLBACK_BUTTON1_PRICE = "callback_button1_price"
 CALLBACK_BUTTON2_PRICE = "callback_button2_price"
-CALLBACK_BUTTON3_MORE = "callback_button3_more"
+CALLBACK_BUTTON10_MORE = "callback_button10_more"
 CALLBACK_BUTTON1_BACK = "callback_button1_back"
 CALLBACK_BUTTON2_BACK = "callback_button1_back"
 CALLBACK_BUTTON3_BACK = "callback_button1_back"
@@ -44,11 +44,15 @@ CALLBACK_BUTTON4_ROOM = "callback_button4_room"
 CALLBACK_BUTTON5_ROOM = "callback_button5_room"
 CALLBACK_BUTTON6_ROOM = "callback_button6_room"
 CALLBACK_BUTTON_HIDE_KEYBOARD = "callback_button9_hide"
+CALLBACK_BUTTON1_MORE = "callback_button1_more"
+CALLBACK_BUTTON2_MORE = "callback_button2_more"
+CALLBACK_BUTTON3_MORE = "callback_button3_more"
+CALLBACK_BUTTON3_URL = "callback_button3_url"
 
 TITLES = {
     CALLBACK_BUTTON1_PRICE: "0-1.000.000",
     CALLBACK_BUTTON2_PRICE: "1.000.000-2.000.000",
-    CALLBACK_BUTTON3_MORE: "Ещё ➡️",
+    CALLBACK_BUTTON10_MORE: "Ещё ➡️",
     CALLBACK_BUTTON1_BACK: "Назад ⬅️",
     CALLBACK_BUTTON2_BACK: "Назад ⬅️",
     CALLBACK_BUTTON3_BACK: "Назад ⬅️",
@@ -71,6 +75,10 @@ TITLES = {
     CALLBACK_BUTTON4_ROOM: "3 комнаты",
     CALLBACK_BUTTON5_ROOM: "4 комнаты",
     CALLBACK_BUTTON6_ROOM: "5 комнат",
+    CALLBACK_BUTTON1_MORE: "Ещё 5 ⚡️",
+    CALLBACK_BUTTON2_MORE: "Ещё 5 ⚡️",
+    CALLBACK_BUTTON3_MORE: "Ещё 10 ⚡️",
+    CALLBACK_BUTTON3_URL: "Ссылка 🏢"
 }
 
 
@@ -107,16 +115,13 @@ def get_base_inline_keyboard():
             InlineKeyboardButton(TITLES[CALLBACK_BUTTON_HIDE_KEYBOARD], callback_data=CALLBACK_BUTTON_HIDE_KEYBOARD),
         ],
         [
-            InlineKeyboardButton(TITLES[CALLBACK_BUTTON3_MORE], callback_data=CALLBACK_BUTTON3_MORE),
+            InlineKeyboardButton(TITLES[CALLBACK_BUTTON10_MORE], callback_data=CALLBACK_BUTTON10_MORE),
         ],
     ]
     return InlineKeyboardMarkup(keyboard)
 
 
 def get_keyboard2():
-    """ Получить вторую страницу клавиатуры для сообщений
-        Возможно получить только при нажатии кнопки на первой клавиатуре
-    """
     keyboard = [
         [
             InlineKeyboardButton(TITLES[CALLBACK_BUTTON10_PRICE], callback_data=CALLBACK_BUTTON10_PRICE),
@@ -141,9 +146,6 @@ def get_keyboard2():
 
 
 def get_keyboard3():
-    """ Получить вторую страницу клавиатуры для сообщений
-        Возможно получить только при нажатии кнопки на первой клавиатуре
-    """
     keyboard = [
         [
             InlineKeyboardButton(TITLES[CALLBACK_BUTTON1_ROOM], callback_data=CALLBACK_BUTTON1_ROOM),
@@ -170,6 +172,42 @@ def get_keyboard3():
     return InlineKeyboardMarkup(keyboard)
 
 
+def get_keyboard4():
+    keyboard = [
+        [
+            InlineKeyboardButton(TITLES[CALLBACK_BUTTON1_MORE], callback_data=CALLBACK_BUTTON1_MORE),
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def get_keyboard5():
+    keyboard = [
+        [
+            InlineKeyboardButton(TITLES[CALLBACK_BUTTON2_MORE], callback_data=CALLBACK_BUTTON2_MORE),
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def get_keyboard6():
+    keyboard = [
+        [
+            InlineKeyboardButton(TITLES[CALLBACK_BUTTON3_MORE], callback_data=CALLBACK_BUTTON3_MORE),
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
+def get_keyboard7():
+    keyboard = [
+        [
+            InlineKeyboardButton(TITLES[CALLBACK_BUTTON3_URL], callback_data=CALLBACK_BUTTON3_URL),
+        ],
+    ]
+    return InlineKeyboardMarkup(keyboard)
+
+
 def keyboard_callback_handler(update: Update, context: CallbackContext):
     """ Обработчик ВСЕХ кнопок со ВСЕХ клавиатур
     """
@@ -181,7 +219,7 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
     chat_id = update.effective_message.chat_id
     current_text = update.effective_message.text
 
-    if data == CALLBACK_BUTTON3_MORE:
+    if data == CALLBACK_BUTTON10_MORE:
         # Показать следующий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
@@ -199,7 +237,7 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
         # Показать предыдущий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
-            text="Выберите диапозон цен",
+            text="Выберите диапазон цен",
             reply_markup=get_keyboard2(),
         )
     elif data == CALLBACK_BUTTON_HIDE_KEYBOARD:
@@ -211,6 +249,7 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
             text="Спрятали клавиатуру\n\nНажмите /buy чтобы вернуть её обратно",
             reply_markup=ReplyKeyboardRemove(),
         )
+
     elif data in (CALLBACK_BUTTON1_PRICE, CALLBACK_BUTTON2_PRICE, CALLBACK_BUTTON5_PRICE, CALLBACK_BUTTON6_PRICE,
                   CALLBACK_BUTTON7_PRICE, CALLBACK_BUTTON8_PRICE, CALLBACK_BUTTON9_PRICE, CALLBACK_BUTTON10_PRICE,
                   CALLBACK_BUTTON11_PRICE, CALLBACK_BUTTON12_PRICE, CALLBACK_BUTTON13_PRICE, CALLBACK_BUTTON14_PRICE):
@@ -259,16 +298,69 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
             CALLBACK_BUTTON5_ROOM: '4-к',
             CALLBACK_BUTTON6_ROOM: '5-к',
         }[data]
-    rl = Product.objects.filter(
-        price__gte=lprice,
-        price__lt=gprice,
-        title__contains=f'{room}',
-    )
-    for e in rl[0:5]:
-        text = text + '\n'.join([f'{e.title}:\n{e.url}\n'])
-    query.edit_message_text(
-        text=f'\n{text}',
-    )
+        rl = Product.objects.filter(
+            price__gte=lprice,
+            price__lt=gprice,
+            title__contains=f'{room}',
+        )
+        for e in rl[0:5]:
+            text = text + '\n'.join([f'{e.title}:\n{e.url}\n\n'])
+        query.edit_message_text(
+            text=f'\n{text}',
+            reply_markup=get_keyboard4(),
+        )
+
+    elif data == CALLBACK_BUTTON1_MORE:
+        text = 'Предложения на рынке:\n'
+
+        rl = Product.objects.filter(
+            price__gte=lprice,
+            price__lt=gprice,
+            title__contains=f'{room}',
+        )
+        for e in rl[5:10]:
+            text = text + '\n'.join([f'{e.title}:\n{e.url}\n\n'])
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=f'\n{text}',
+            reply_markup=get_keyboard5(),
+        )
+
+    elif data == CALLBACK_BUTTON2_MORE:
+        text = 'Предложения на рынке:\n'
+
+        rl = Product.objects.filter(
+            price__gte=lprice,
+            price__lt=gprice,
+            title__contains=f'{room}',
+        )
+        for e in rl[10:15]:
+            text = text + '\n'.join([f'{e.title}:\n{e.url}\n\n'])
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=f'\n{text}',
+            reply_markup=get_keyboard6(),
+        )
+
+    elif data == CALLBACK_BUTTON3_MORE:
+        text = 'Предложения на рынке:\n'
+
+        rl = Product.objects.filter(
+            price__gte=lprice,
+            price__lt=gprice,
+            title__contains=f'{room}',
+        )
+        for e in rl[15:25]:
+            text = text + '\n'.join([f'{e.title}:\n{e.url}\n\n'])
+        context.bot.send_message(
+            chat_id=chat_id,
+            text=f'\n{text}',
+        )
+    elif data == CALLBACK_BUTTON3_URL:
+        query.edit_message_text(
+            text=current_text
+
+        )
 
 
 def log_errors(f):
@@ -329,7 +421,7 @@ def do_start(update: Update, context: CallbackContext):
 @log_errors
 def do_buy(update: Update, context: CallbackContext):
     update.message.reply_text(
-        text=f'Выберите диапозон цен',
+        text=f'Выберите диапазон цен',
         reply_markup=get_base_inline_keyboard(),
     )
 
@@ -357,6 +449,7 @@ class Command(BaseCommand):
         )
 
         updater.dispatcher.add_handler(CommandHandler("buy", do_buy))
+        updater.dispatcher.add_handler(CommandHandler("buy", do_echo))
         updater.dispatcher.add_handler(CommandHandler("count", do_count))
         updater.dispatcher.add_handler(CommandHandler("start", do_start))
         message_handler = MessageHandler(Filters.text, do_echo)
